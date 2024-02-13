@@ -4,6 +4,7 @@ import java51.forum.dto.AddPostDto;
 import java51.forum.dto.PeriodDto;
 import java51.forum.dto.PostDto;
 import java51.forum.dto.UpdatePostDto;
+import java51.forum.model.Post;
 import java51.forum.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -12,21 +13,23 @@ import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
+@RestController
+@RequestMapping ("/forum")
 public class PostController  {
     final PostService postService;
 
-    @PostMapping ("/post/{postId}")
-    public PostDto addPost(@RequestBody AddPostDto addPostDto, @PathVariable Integer postId) {
-        return postService.addPost(addPostDto, postId);
+    @PostMapping ("/post/{user}")
+    public Post addPost(@RequestBody AddPostDto addPostDto, @PathVariable ("user") String author) {
+        return postService.addPost(addPostDto, author);
     }
 
     @GetMapping ("/post/{postId}")
-    public PostDto findPostById(@PathVariable Integer id) {
+    public PostDto findPostById(@PathVariable String id) {
         return postService.findPostById(id);
     }
 
     @PutMapping ("/post/{postId}/like")
-    public Boolean addLike(@PathVariable Integer postId) {
+    public Boolean addLike(@PathVariable String postId) {
         return postService.addLike(postId);
     }
 
@@ -36,12 +39,12 @@ public class PostController  {
     }
 
     @PutMapping ("/post/{postId}/comment/{user}")
-    public PostDto addComment(@RequestBody String message, @PathVariable Integer postId, @PathVariable String user) {
+    public PostDto addComment(@RequestBody String message, @PathVariable String postId, @PathVariable String user) {
         return postService.addComment (message, postId, user);
     }
 
     @DeleteMapping ("/post/{postId}")
-    public Optional<PostDto> deletePost(@PathVariable Integer postId) {
+    public Optional<PostDto> deletePost(@PathVariable String postId) {
         return postService.deletePost(postId);
     }
 
@@ -56,7 +59,7 @@ public class PostController  {
     }
 
     @PutMapping ("/post/{postId}")
-    public PostDto updatePost(@RequestBody UpdatePostDto updatePostDto, @PathVariable Integer postId) {
+    public PostDto updatePost(@RequestBody UpdatePostDto updatePostDto, @PathVariable String postId) {
         return postService.updatePost(updatePostDto, postId);
     }
 }

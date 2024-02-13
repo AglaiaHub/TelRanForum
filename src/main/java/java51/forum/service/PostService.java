@@ -4,29 +4,30 @@ import java51.forum.dto.AddPostDto;
 import java51.forum.dto.PeriodDto;
 import java51.forum.dto.PostDto;
 import java51.forum.dto.UpdatePostDto;
+import java51.forum.model.Post;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface PostService {
 
-    PostDto addPost (AddPostDto addPostDto, Integer postId);
+    Post addPost (AddPostDto addPostDto, String postId);
 
-    PostDto findPostById (Integer id);
+    PostDto findPostById (String id);
 
-    Boolean addLike (Integer postId);
+    Boolean addLike (String postId);
 
     List <PostDto> findPostsByAuthor(String user);
 
-    PostDto addComment (String message, Integer postId, String user);
+    PostDto addComment (String message, String postId, String user);
 
-    Optional<PostDto> deletePost(Integer postId);
+    Optional<PostDto> deletePost(String postId);
 
     List<PostDto> findPostsByTags (List<String> tags);
 
     List<PostDto> findPostsByPeriod (PeriodDto period);
 
-    PostDto updatePost (UpdatePostDto updatePostDto, Integer postId);
+    PostDto updatePost (UpdatePostDto updatePostDto, String postId);
 
 
 }
