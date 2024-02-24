@@ -16,6 +16,6 @@ public class ServiceConfig {
                 .setFieldAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PRIVATE)
                 .setMatchingStrategy(MatchingStrategies.STRICT);
         ;
-        return new ModelMapper();
+        return modelMapper;
     }
 }
