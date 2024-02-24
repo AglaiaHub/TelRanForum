@@ -17,11 +17,11 @@ import java.security.Principal;
 @RequiredArgsConstructor
 @Order(30)
 public class UpdateByOnewFilter
-//        implements Filter
+        implements Filter
 {
     final UserAccountRepository userAccountRepository;
 
-//    @Override
+    @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         //достать из строки имя пользователя и проверить что он это я
         HttpServletRequest request = (HttpServletRequest) servletRequest;
@@ -36,14 +36,6 @@ public class UpdateByOnewFilter
                 response.sendError(403);
                 return;
             }
-
-//            User user = userAccountRepository.findById(request.getUserPrincipal().getName()).get();
-//
-//            if (!user.getLogin().equals(request.getRemoteUser())) {
-//                response.sendError(403, "Permission denied");
-//                return;
-//
-//            }
 
         }
         filterChain.doFilter(request, response);

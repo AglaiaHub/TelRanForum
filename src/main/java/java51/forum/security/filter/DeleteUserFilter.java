@@ -17,19 +17,16 @@ import java.security.Principal;
 
 @Component
 @RequiredArgsConstructor
-@Order(30)
+@Order(40)
 public class DeleteUserFilter
-//        implements Filter
+        implements Filter
 {
     final UserAccountRepository userAccountRepository;
 
-//    @Override
+    @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
-
-//        if (checkRole(request, response) && checkName(request, response))
-
         if (checkAndPoint(request.getMethod(), request.getServletPath())) {
             Principal principal = request.getUserPrincipal();
             String[] arr = request.getServletPath().split("/");

@@ -25,12 +25,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Order(10) //фильтры выполняются от меньшего к большему
 public class AuthenticationFilter
-//        implements Filter
+        implements Filter
 {
 
     final UserAccountRepository userAccountRepository;
 
-//    @Override
+    @Override
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain)
             throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) req;
