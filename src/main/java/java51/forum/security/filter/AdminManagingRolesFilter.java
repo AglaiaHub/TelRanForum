@@ -13,22 +13,19 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 @Component
-@RequiredArgsConstructor
 @Order(20)
 
 public class AdminManagingRolesFilter
         implements Filter
 {
 
-    final UserAccountRepository userAccountRepository;
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
             throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         if (checkAndPoint(request.getMethod(), request.getServletPath())) {
-            User userAccount = userAccountRepository
-                    .findById(request.getUserPrincipal().getName()).get();
+            User userAccount = (User) request.getUserPrincipal();
             if (!userAccount.getRoles().contains(Role.ADMINISTRATOR)) {
                 response.sendError(403, "Permission denied");
                 return;

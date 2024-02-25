@@ -16,12 +16,10 @@ import java.io.IOException;
 import java.security.Principal;
 
 @Component
-@RequiredArgsConstructor
 @Order(40)
 public class DeleteUserFilter
         implements Filter
 {
-    final UserAccountRepository userAccountRepository;
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
@@ -32,8 +30,7 @@ public class DeleteUserFilter
             String[] arr = request.getServletPath().split("/");
             String userName = arr[arr.length - 1];
 
-            User user = userAccountRepository
-                    .findById(((HttpServletRequest) request).getUserPrincipal().getName()).get();
+            User user = (User) request.getUserPrincipal();
 
 
             if (!(principal.getName().equalsIgnoreCase(userName) || user.getRoles().contains(Role.ADMINISTRATOR))) {

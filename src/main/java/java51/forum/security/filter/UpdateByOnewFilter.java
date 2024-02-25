@@ -42,6 +42,12 @@ public class UpdateByOnewFilter
     }
 
     private boolean checkAndPoint(String method, String servletPath) {
-        return HttpMethod.PUT.matches(method) && servletPath.matches("/account/user/\\w+");
+        return HttpMethod.PUT.matches(method) && (servletPath.matches("/account/user/\\w+")
+                || servletPath.matches("/post/postId/\\w+"))
+//                || (HttpMethod.POST.matches(method) && path.matches("/post/user/\\w"))
+//                add post autor & post
+                ;
+
+        // @GetMapping ("/post/{postId}")
     }
 }
