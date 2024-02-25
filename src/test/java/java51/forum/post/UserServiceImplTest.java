@@ -8,11 +8,10 @@ import java51.forum.accounting.dto.UserRegisterDto;
 import java51.forum.accounting.dto.exception.UserExistException;
 import java51.forum.accounting.dto.exception.UserNotFoundException;
 import java51.forum.accounting.model.Role;
-import java51.forum.accounting.model.User;
+import java51.forum.accounting.model.UserAccount;
 import java51.forum.accounting.service.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
@@ -51,7 +50,7 @@ public class UserServiceImplTest {
         userRegisterDto.setLastName("Doe");
 
         when(userAccountRepository.existsById("testuser")).thenReturn(false);
-//        when(modelMapper.map(userRegisterDto, User.class)).thenReturn()
+//        when(modelMapper.map(userRegisterDto, UserAccount.class)).thenReturn()
 
         assertDoesNotThrow(() -> userService.registerUser(userRegisterDto));
         verify(userAccountRepository, times(1)).save(any());
@@ -75,22 +74,22 @@ public class UserServiceImplTest {
     void testDeleteUser_UserExists() {
         // Arrange
         String login = "testUser";
-        User user = new User();
-        user.setLogin(login);
+        UserAccount userAccount = new UserAccount();
+        userAccount.setLogin(login);
 
         // Mocking behavior of userAccountRepository
-        when(userAccountRepository.findById(login)).thenReturn(Optional.of(user));
+        when(userAccountRepository.findById(login)).thenReturn(Optional.of(userAccount));
 
         // Act
         UserDto deletedUserDto = userService.deleteUser(login);
 
         // Verify
         verify(userAccountRepository, times(1)).findById(login);
-        verify(userAccountRepository, times(1)).delete(user);
-        verify(modelMapper, times(1)).map(user, UserDto.class);
+        verify(userAccountRepository, times(1)).delete(userAccount);
+        verify(modelMapper, times(1)).map(userAccount, UserDto.class);
 
         // Assert
-        assertEquals(user.getLogin(), deletedUserDto.getLogin());
+        assertEquals(userAccount.getLogin(), deletedUserDto.getLogin());
     }
 
     @Test
@@ -118,23 +117,23 @@ public class UserServiceImplTest {
         userEditDto.setFirstName("John");
         userEditDto.setLastName("Doe");
 
-        User existingUser = new User();
-        existingUser.setLogin(login);
+        UserAccount existingUserAccount = new UserAccount();
+        existingUserAccount.setLogin(login);
 
         // Mocking behavior of userAccountRepository
-        when(userAccountRepository.findById(login)).thenReturn(Optional.of(existingUser));
+        when(userAccountRepository.findById(login)).thenReturn(Optional.of(existingUserAccount));
 
         // Act
         UserDto updatedUserDto = userService.updateUser(login, userEditDto);
 
         // Verify
         verify(userAccountRepository, times(1)).findById(login);
-        verify(userAccountRepository, times(1)).save(existingUser);
-        verify(modelMapper, times(1)).map(existingUser, UserDto.class);
+        verify(userAccountRepository, times(1)).save(existingUserAccount);
+        verify(modelMapper, times(1)).map(existingUserAccount, UserDto.class);
 
         // Assert
-        assertEquals(existingUser.getFirstName(), userEditDto.getFirstName());
-        assertEquals(existingUser.getLastName(), userEditDto.getLastName());
+        assertEquals(existingUserAccount.getFirstName(), userEditDto.getFirstName());
+        assertEquals(existingUserAccount.getLastName(), userEditDto.getLastName());
     }
 
     @Test
@@ -161,14 +160,14 @@ public class UserServiceImplTest {
     void testGetUser_UserExists() {
         // Arrange
         String login = "testUser";
-        User user = new User();
-        user.setLogin(login);
+        UserAccount userAccount = new UserAccount();
+        userAccount.setLogin(login);
         UserDto userDto = new UserDto();
         userDto.setLogin(login);
 
         // Mocking behavior of userAccountRepository
-        when(userAccountRepository.findById(login)).thenReturn(Optional.of(user));
-        when(modelMapper.map(user, UserDto.class)).thenReturn(userDto);
+        when(userAccountRepository.findById(login)).thenReturn(Optional.of(userAccount));
+        when(modelMapper.map(userAccount, UserDto.class)).thenReturn(userDto);
 
         // Act
         UserDto retrievedUserDto = userService.getUser(login);
@@ -178,7 +177,7 @@ public class UserServiceImplTest {
 
         // Verify
         verify(userAccountRepository, times(1)).findById(login);
-        verify(modelMapper, times(1)).map(user, UserDto.class);
+        verify(modelMapper, times(1)).map(userAccount, UserDto.class);
     }
 
     @Test
@@ -204,23 +203,23 @@ public class UserServiceImplTest {
         String login = "testUser";
         String role = "MODERATOR";
         boolean isAddRole = true;
-        User user = new User(login, "password", "John", "Doe");
+        UserAccount userAccount = new UserAccount(login, "password", "John", "Doe");
         Set<Role> roles = new HashSet<>();
         roles.add(Role.USER);
-        user.setRoles(roles);
+        userAccount.setRoles(roles);
 
         // Mocking behavior of userAccountRepository
-        when(userAccountRepository.findById(login)).thenReturn(Optional.of(user));
-        when(userAccountRepository.save(user)).thenReturn(user);
+        when(userAccountRepository.findById(login)).thenReturn(Optional.of(userAccount));
+        when(userAccountRepository.save(userAccount)).thenReturn(userAccount);
 
         // Act
         RolesDto rolesDto = userService.changeRolesList(login, role, isAddRole);
 
         // Assert
-        assertTrue(user.getRoles().contains(Role.MODERATOR));
+        assertTrue(userAccount.getRoles().contains(Role.MODERATOR));
         verify(userAccountRepository, times(1)).findById(login);
-        verify(userAccountRepository, times(1)).save(user);
-        verify(modelMapper, times(1)).map(user, RolesDto.class);
+        verify(userAccountRepository, times(1)).save(userAccount);
+        verify(modelMapper, times(1)).map(userAccount, RolesDto.class);
     }
 
     @Test
@@ -231,21 +230,21 @@ public class UserServiceImplTest {
         boolean isAddRole = false;
         Set<Role> roles = new HashSet<>();
         roles.add(Role.MODERATOR);
-        User user = new User(login, "password", "John", "Doe");
-        user.setRoles(roles);
+        UserAccount userAccount = new UserAccount(login, "password", "John", "Doe");
+        userAccount.setRoles(roles);
 
         // Mocking behavior of userAccountRepository
-        when(userAccountRepository.findById(login)).thenReturn(Optional.of(user));
-        when(userAccountRepository.save(user)).thenReturn(user);
+        when(userAccountRepository.findById(login)).thenReturn(Optional.of(userAccount));
+        when(userAccountRepository.save(userAccount)).thenReturn(userAccount);
 
         // Act
         RolesDto rolesDto = userService.changeRolesList(login, role, isAddRole);
 
         // Assert
-        assertFalse(user.getRoles().contains(Role.MODERATOR));
+        assertFalse(userAccount.getRoles().contains(Role.MODERATOR));
         verify(userAccountRepository, times(1)).findById(login);
-        verify(userAccountRepository, times(1)).save(user);
-        verify(modelMapper, times(1)).map(user, RolesDto.class);
+        verify(userAccountRepository, times(1)).save(userAccount);
+        verify(modelMapper, times(1)).map(userAccount, RolesDto.class);
     }
 
     @Test

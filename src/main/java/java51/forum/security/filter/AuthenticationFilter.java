@@ -7,7 +7,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import java51.forum.accounting.dao.UserAccountRepository;
-import java51.forum.accounting.model.User;
+import java51.forum.accounting.model.UserAccount;
+import java51.forum.security.context.SecurityContext;
 import java51.forum.security.model.UserPrincipal;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.core.annotation.Order;
@@ -32,6 +33,7 @@ public class AuthenticationFilter
 {
 
     final UserAccountRepository userAccountRepository;
+    final SecurityContext securityContext;
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain)
@@ -40,20 +42,26 @@ public class AuthenticationFilter
         HttpServletResponse response = (HttpServletResponse) resp;
 
         if (checkEndPoint(request.getMethod(), request.getServletPath())) {
-            User user;
-            try {
-                String[] credentials = getCredentials(request.getHeader("Authorization"));
-                user = userAccountRepository.findById(credentials[0])
-                        .orElseThrow(RuntimeException::new);
-                if (!BCrypt.checkpw(credentials[1], user.getPassword())) {
-                    throw new RuntimeException();
+            String sessionId = request.getSession().getId();
+            UserPrincipal userPrincipal = securityContext.getUserBySessionId(sessionId);
+            if (userPrincipal == null) {
+                try {
+                    String[] credentials = getCredentials(request.getHeader("Authorization"));
+                    UserAccount userAccount = userAccountRepository.findById(credentials[0])
+                            .orElseThrow(RuntimeException::new);
+                    if (!BCrypt.checkpw(credentials[1], userAccount.getPassword())) {
+                        throw new RuntimeException();
+                    }
+                    Set<String> roles = userAccount.getRoles().stream().map(r -> r.name()).collect(Collectors.toSet());
+                    userPrincipal = new UserPrincipal(userAccount.getLogin(), roles);
+                    securityContext.addUserSession(sessionId, userPrincipal);
+                } catch (Exception e) {
+                    response.sendError(401);
+                    return;
                 }
-            } catch (Exception e) {
-                response.sendError(401);
-                return;
+//                roles = userAccount.getRoles().stream().map(r -> r.toString()).collect(Collectors.toSet());
             }
-            Set<String> roles = user.getRoles().stream().map(r -> r.toString()).collect(Collectors.toSet());
-            request = new WrappedRequest(request, user.getLogin(), roles);
+            request = new WrappedRequest(request, userPrincipal.getName(), userPrincipal.getRoles());
         }
 
         chain.doFilter(request, response);

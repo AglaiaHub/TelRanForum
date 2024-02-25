@@ -1,29 +1,18 @@
 package java51.forum.post;
 
 import java51.forum.accounting.dao.UserAccountRepository;
-import java51.forum.accounting.dto.RolesDto;
 import java51.forum.accounting.dto.UserDto;
-import java51.forum.accounting.dto.UserEditDto;
 import java51.forum.accounting.dto.UserRegisterDto;
 import java51.forum.accounting.dto.exception.UserExistException;
-import java51.forum.accounting.dto.exception.UserNotFoundException;
-import java51.forum.accounting.model.Role;
-import java51.forum.accounting.model.User;
+import java51.forum.accounting.model.UserAccount;
 import java51.forum.accounting.service.UserServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -50,26 +39,26 @@ public class UserAccountServiceTest {
         userRegisterDto.setFirstName("John");
         userRegisterDto.setLastName("Doe");
 
-        User user = new User();
-        user.setLogin(userRegisterDto.getLogin());
-        user.setPassword("hashed_password"); // Assuming password hashing is handled in the service
-        user.setFirstName(userRegisterDto.getFirstName());
-        user.setLastName(userRegisterDto.getLastName());
+        UserAccount userAccount = new UserAccount();
+        userAccount.setLogin(userRegisterDto.getLogin());
+        userAccount.setPassword("hashed_password"); // Assuming password hashing is handled in the service
+        userAccount.setFirstName(userRegisterDto.getFirstName());
+        userAccount.setLastName(userRegisterDto.getLastName());
 
         when(userAccountRepository.existsById(userRegisterDto.getLogin())).thenReturn(false);
-        when(modelMapper.map(userRegisterDto, User.class)).thenReturn(user);
-        when(userAccountRepository.save(any(User.class))).thenReturn(user);
+        when(modelMapper.map(userRegisterDto, UserAccount.class)).thenReturn(userAccount);
+        when(userAccountRepository.save(any(UserAccount.class))).thenReturn(userAccount);
 
         // Act
         UserDto registeredUser = userService.registerUser(userRegisterDto);
 
         // Assert
         assertNotNull(registeredUser);
-        assertEquals(user.getLogin(), registeredUser.getLogin());
-        assertEquals(user.getFirstName(), registeredUser.getFirstName());
-        assertEquals(user.getLastName(), registeredUser.getLastName());
+        assertEquals(userAccount.getLogin(), registeredUser.getLogin());
+        assertEquals(userAccount.getFirstName(), registeredUser.getFirstName());
+        assertEquals(userAccount.getLastName(), registeredUser.getLastName());
         verify(userAccountRepository, times(1)).existsById(userRegisterDto.getLogin());
-        verify(userAccountRepository, times(1)).save(any(User.class));
+        verify(userAccountRepository, times(1)).save(any(UserAccount.class));
     }
 
     @Test
@@ -82,7 +71,7 @@ public class UserAccountServiceTest {
         // Act and Assert
         assertThrows(UserExistException.class, () -> userService.registerUser(userRegisterDto));
         verify(userAccountRepository, times(1)).existsById(userRegisterDto.getLogin());
-        verify(userAccountRepository, never()).save(any(User.class));
+        verify(userAccountRepository, never()).save(any(UserAccount.class));
     }
 
 }

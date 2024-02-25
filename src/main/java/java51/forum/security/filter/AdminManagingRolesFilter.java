@@ -3,10 +3,8 @@ package java51.forum.security.filter;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java51.forum.accounting.dao.UserAccountRepository;
 import java51.forum.accounting.model.Role;
-import java51.forum.accounting.model.User;
-import lombok.RequiredArgsConstructor;
+import java51.forum.accounting.model.UserAccount;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -25,8 +23,8 @@ public class AdminManagingRolesFilter
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         if (checkAndPoint(request.getMethod(), request.getServletPath())) {
-            User userAccount = (User) request.getUserPrincipal();
-            if (!userAccount.getRoles().contains(Role.ADMINISTRATOR)) {
+            UserAccount userAccountAccount = (UserAccount) request.getUserPrincipal();
+            if (!userAccountAccount.getRoles().contains(Role.ADMINISTRATOR)) {
                 response.sendError(403, "Permission denied");
                 return;
             }

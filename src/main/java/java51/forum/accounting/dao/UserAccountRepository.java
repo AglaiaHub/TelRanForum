@@ -1,9 +1,7 @@
 package java51.forum.accounting.dao;
 
-import java51.forum.accounting.model.User;
+import java51.forum.accounting.model.UserAccount;
 import org.springframework.data.repository.CrudRepository;
 
-import java.util.Optional;
-
-public interface UserAccountRepository extends CrudRepository<User, String> {
+public interface UserAccountRepository extends CrudRepository<UserAccount, String> {
 }

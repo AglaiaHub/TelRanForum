@@ -13,7 +13,7 @@ import java.util.Set;
 @Document (collection = "users")
 @Setter
 
-public class User {
+public class UserAccount {
     @Id
     String login;
     String password;
@@ -21,12 +21,12 @@ public class User {
     String lastName;
     Set<Role> roles;
 
-    public User(){
+    public UserAccount(){
         roles = new HashSet<>();
         roles.add(Role.USER);
     }
 
-    public User(String login, String password, String firstName, String lastName){
+    public UserAccount(String login, String password, String firstName, String lastName){
         this();
         this.login = login;
         this.password = password;
@@ -37,6 +37,7 @@ public class User {
     public Boolean addRole(String role){
         try {
             Role parsedRole = Role.valueOf(role);
+//            if (parsedRole.)
             roles.add(parsedRole);
             return true;
         } catch (IllegalArgumentException e) {

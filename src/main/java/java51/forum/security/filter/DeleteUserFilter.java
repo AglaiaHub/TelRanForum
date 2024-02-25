@@ -4,10 +4,8 @@ package java51.forum.security.filter;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java51.forum.accounting.dao.UserAccountRepository;
 import java51.forum.accounting.model.Role;
-import java51.forum.accounting.model.User;
-import lombok.RequiredArgsConstructor;
+import java51.forum.accounting.model.UserAccount;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
@@ -30,10 +28,10 @@ public class DeleteUserFilter
             String[] arr = request.getServletPath().split("/");
             String userName = arr[arr.length - 1];
 
-            User user = (User) request.getUserPrincipal();
+            UserAccount userAccount = (UserAccount) request.getUserPrincipal();
 
 
-            if (!(principal.getName().equalsIgnoreCase(userName) || user.getRoles().contains(Role.ADMINISTRATOR))) {
+            if (!(principal.getName().equalsIgnoreCase(userName) || userAccount.getRoles().contains(Role.ADMINISTRATOR))) {
                 response.sendError(403);
                 return;
             }
