@@ -29,7 +29,7 @@ public class UserAccountController {
 //        return userService.getUser(credentionals.split(":")[0]);
 //    }
 
-    @PostMapping
+    @PostMapping ("/login")
     public UserDto login(Principal principal) {
         return userService.getUser(principal.getName());
     }
