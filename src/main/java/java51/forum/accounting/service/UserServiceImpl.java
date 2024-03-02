@@ -9,8 +9,8 @@ import java51.forum.accounting.dto.exception.UserExistException;
 import java51.forum.accounting.dto.exception.UserNotFoundException;
 import java51.forum.accounting.model.UserAccount;
 import lombok.RequiredArgsConstructor;
-import org.mindrot.jbcrypt.BCrypt;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService{
     final ModelMapper modelMapper;
     final UserAccountRepository userAccountRepository;
+    final PasswordEncoder passwordEncoder;
 
     @Override
     public UserDto registerUser(UserRegisterDto userRegisterDto) {
@@ -25,7 +26,7 @@ public class UserServiceImpl implements UserService{
             throw new UserExistException();
         }
         UserAccount userAccount = modelMapper.map(userRegisterDto, UserAccount.class);
-        String password = BCrypt.hashpw(userRegisterDto.getPassword(), BCrypt.gensalt());
+        String password = passwordEncoder.encode(userRegisterDto.getPassword());
         userAccount.setPassword(password);
         userAccountRepository.save(userAccount);
         return modelMapper.map(userAccount, UserDto.class);
@@ -77,7 +78,7 @@ public class UserServiceImpl implements UserService{
     @Override
     public void changePassword(String login, String newPassword) {
         UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(UserNotFoundException::new);
-        String password = BCrypt.hashpw(newPassword, BCrypt.gensalt());
+        String password = passwordEncoder.encode(newPassword);
         userAccount.setPassword(password);
         userAccountRepository.save(userAccount);
     }
@@ -85,7 +86,7 @@ public class UserServiceImpl implements UserService{
     @Override
     public void run(String... args) throws Exception {
         if (!userAccountRepository.existsById("admin")) {
-            String password = BCrypt.hashpw("admin", BCrypt.gensalt());
+            String password = passwordEncoder.encode("admin");
             UserAccount userAccountAccount = new UserAccount("admin", password, "", "");
             userAccountAccount.addRole("MODERATOR");
             userAccountAccount.addRole("ADMINISTRATOR");

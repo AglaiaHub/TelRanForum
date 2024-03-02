@@ -1,4 +1,4 @@
-package java51.forum.security.model;
+package java51.forum.security;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
